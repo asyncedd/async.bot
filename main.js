@@ -1,5 +1,5 @@
 import { Client, Collection, GatewayIntentBits, Events } from "discord.js";
-import fs from "fs/promises";
+import fs from "node:fs";
 import { fileURLToPath } from "url";
 import path from "path";
 import dotenv from "dotenv";
@@ -13,28 +13,35 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.commands = new Collection();
 
-const commandsPath = path.join(__dirname, "commands");
+const commandFolders = fs.readdirSync("./commands");
 
 async function loadCommands() {
-  try {
-    const commandFiles = await fs.readdir(commandsPath);
+  for (const folder of commandFolders) {
+    try {
+      const commandFiles = fs
+        .readdirSync(`./commands/${folder}`)
+        .filter((file) => file.endsWith(".js"));
 
-    for (const file of commandFiles) {
-      if (file.endsWith(".js")) {
-        const filePath = path.join(commandsPath, file);
-        const { default: command } = await import(filePath);
-
-        if ("data" in command && "execute" in command) {
-          client.commands.set(command.data.name, command);
-        } else {
-          console.log(
-            `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+      for (const file of commandFiles) {
+        if (file.endsWith(".js")) {
+          const filePath = path.join(
+            path.join(__dirname, `commands/${folder}`),
+            file
           );
+          const { default: command } = await import(filePath);
+
+          if ("data" in command && "execute" in command) {
+            client.commands.set(command.data.name, command);
+          } else {
+            console.log(
+              `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+            );
+          }
         }
       }
+    } catch (error) {
+      console.error("Error loading commands:", error);
     }
-  } catch (error) {
-    console.error("Error loading commands:", error);
   }
 }
 
