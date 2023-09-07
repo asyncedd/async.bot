@@ -3,6 +3,7 @@ import fs from "node:fs";
 import { fileURLToPath } from "url";
 import path from "path";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -45,6 +46,17 @@ async function loadCommands() {
   }
 }
 
+async function loadDatabase() {
+  try {
+    await mongoose.connect(process.env.MONGOOSE, {});
+    console.log("[SUCCESS] Successfully connected to MongoDB's Database!");
+  } catch (error) {
+    console.error("Error loading errors:", error);
+  }
+}
+
+loadDatabase();
+
 loadCommands();
 
 client.once(Events.ClientReady, (c) => {
@@ -64,7 +76,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 
   try {
-    await command.execute(interaction, client);
+    await command.execute(interaction, {
+      client: client,
+      mongooes: mongoose.connection.models,
+    });
   } catch (error) {
     console.error(error);
 
