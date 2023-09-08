@@ -1,9 +1,8 @@
-import { Client, Collection, GatewayIntentBits, Events } from "discord.js";
+import { Client, Collection, GatewayIntentBits } from "discord.js";
 import fs from "node:fs";
 import { fileURLToPath } from "url";
 import path from "path";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -45,17 +44,6 @@ async function loadCommands() {
     }
   }
 }
-
-async function loadDatabase() {
-  try {
-    await mongoose.connect(process.env.MONGOOSE, {});
-    console.log("[SUCCESS] Successfully connected to MongoDB's Database!");
-  } catch (error) {
-    console.error("Error loading errors:", error);
-  }
-}
-
-loadDatabase();
 
 loadCommands();
 
