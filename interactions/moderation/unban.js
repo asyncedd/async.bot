@@ -62,14 +62,15 @@ export default {
         interaction.guild.members
           .unban(user)
           .then(() => {
-            updateEmbed(`Unbanned ${user.username}.`, null);
+            updateEmbed(`Unbanned ${user.username}.`, null, "#4ade80");
           })
           .catch(() => {
             updateEmbed(
               `I can't unban ${user.username}.`,
               `Please check your permissions because it may be the blame.\nIf you are 100% sure the issue is on our end, please open an issue ${hyperlink(
                 "here",
-                "https://github.com/asyncedd/async.bot"
+                "https://github.com/asyncedd/async.bot",
+                "#ef4444"
               )}`
             );
           });
@@ -80,9 +81,15 @@ export default {
         );
       }
 
-      function updateEmbed(title, description) {
+      /***
+       * A helper function to update the embed
+       * @param {string} color 
+       * @param {string} description 
+       * @param {string} title 
+       */
+      function updateEmbed(title, description, color) {
         confirmation.update({
-          embeds: [{ title, description, color: HEXToVBColor("#FFFFFF") }],
+          embeds: [{ title, description, color: HEXToVBColor(color) }],
           components: [
             new ActionRowBuilder().addComponents(
               cancel.setDisabled(true),
@@ -97,7 +104,7 @@ export default {
           {
             title: `Not unbanning ${user.username}`,
             description: `Confirmation not received within 1 minute, cancelling`,
-            color: HEXToVBColor("#FFFFFF"),
+            color: HEXToVBColor("#DF0334"),
           },
         ],
         components: [

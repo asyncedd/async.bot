@@ -11,7 +11,7 @@ export default {
   async execute(interaction) {
     let user = interaction.targetUser;
     let responseEmbed = {
-      color: HEXToVBColor("#FFFFFF"),
+      color: HEXToVBColor("#4ade80"),
       title: `Information for ${user.username}!`,
       fields: [
         {

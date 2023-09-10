@@ -25,6 +25,7 @@ export default {
       fetchReply: true,
     });
 
+    responseEmbed.color = HEXToVBColor("#4ade80");
     responseEmbed.fields = [
       {
         name: "Ping",
