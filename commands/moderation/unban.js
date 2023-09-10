@@ -41,7 +41,7 @@ export default {
 
     let responseEmbed = {
       color: HEXToVBColor("#FFFFFF"),
-      title: `Banning ${user.username}!`,
+      title: `Unbanning ${user.username}!`,
     };
 
     let sent = await interaction.reply({
@@ -62,7 +62,7 @@ export default {
         interaction.guild.members
           .unban(user)
           .then(() => {
-            updateEmbed(`Banned ${user.username}.`, null);
+            updateEmbed(`Unbanned ${user.username}.`, null);
           })
           .catch(() => {
             updateEmbed(
@@ -76,7 +76,7 @@ export default {
       } else if (confirmation.customId === "cancel") {
         updateEmbed(
           "OK.",
-          `Canceling the action that is the public banning of ${user.username}`
+          `Canceling the action that is the public unbanning of ${user.username}`
         );
       }
 
@@ -95,7 +95,7 @@ export default {
       await interaction.editReply({
         embeds: [
           {
-            title: `Not banning ${user.username}`,
+            title: `Not unbanning ${user.username}`,
             description: `Confirmation not received within 1 minute, cancelling`,
             color: HEXToVBColor("#FFFFFF"),
           },
