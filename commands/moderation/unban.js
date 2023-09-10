@@ -19,15 +19,6 @@ export default {
         .setDescription("The member to unban")
         .setRequired(true)
     )
-    .addBooleanOption((option) =>
-      option
-        .setName("ephemeral")
-        .setDescription("Whetever or not to only show the message to you.")
-        .setRequired(false)
-    )
-    .addStringOption((option) =>
-      option.setName("reason").setDescription("The reason").setRequired(false)
-    )
     .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
     .setDMPermission(false),
   /**
@@ -35,8 +26,6 @@ export default {
    */
   async execute(interaction) {
     let user = interaction.options.getUser("target");
-    let reason = interaction.options.getString("reason") || "Not specified.";
-    let ephemeral = interaction.options.getBoolean("ephemeral");
     let responseEmbed = {
       color: HEXToVBColor("#FFFFFF"),
       title: `Unbanning ${user.username}!`,
@@ -44,17 +33,16 @@ export default {
 
     let sent = await interaction.reply({
       embeds: [responseEmbed],
-      ephemeral,
       fetchReply: true,
     });
 
     interaction.guild.members
-      .unban(user, { reason: reason })
+      .unban(user)
       .then(() => {
         const title = `Unbanned ${user.username}.`;
         const description = `Reason: ${reason}`;
 
-        updateEmbed(title, description, ephemeral);
+        updateEmbed(title, description);
       })
       .catch(() => {
         updateEmbed(
@@ -67,10 +55,9 @@ export default {
         );
       });
 
-    function updateEmbed(title, description, ephemeral) {
+    function updateEmbed(title, description) {
       sent.edit({
         embeds: [{ title, description, color: HEXToVBColor("#FFFFFF") }],
-        ephemeral,
       });
     }
   },
