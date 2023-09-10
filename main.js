@@ -10,19 +10,19 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.commands = new Collection();
 
-const commandFolders = fs.readdirSync("./commands");
+const commandFolders = fs.readdirSync("./interactions");
 
 async function loadCommands() {
   for (const folder of commandFolders) {
     try {
       const commandFiles = fs
-        .readdirSync(`./commands/${folder}`)
+        .readdirSync(`./interactions/${folder}`)
         .filter((file) => file.endsWith(".js"));
 
       for (const file of commandFiles) {
         if (file.endsWith(".js")) {
           const filePath = path.join(
-            path.join(__dirname, `commands/${folder}`),
+            path.join(__dirname, `interactions/${folder}`),
             file
           );
           const { default: command } = await import(filePath);
