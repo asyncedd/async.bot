@@ -5,6 +5,7 @@ import {
   ButtonBuilder,
   ButtonStyle,
   ActionRowBuilder,
+  EmbedBuilder,
   hyperlink,
 } from "discord.js";
 
@@ -39,10 +40,10 @@ export default {
       .setLabel("Cancel")
       .setStyle(ButtonStyle.Secondary);
 
-    let responseEmbed = {
+    let responseEmbed = EmbedBuilder({
       color: HEXToVBColor("#FFFFFF"),
       title: `Unbanning ${user.username}!`,
-    };
+    });
 
     let sent = await interaction.reply({
       embeds: [responseEmbed],

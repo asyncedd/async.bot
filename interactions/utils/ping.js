@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 
 function HEXToVBColor(hex) {
   return parseInt(hex.replace("#", "0x"), 16);
@@ -9,7 +9,7 @@ export default {
     .setName("ping")
     .setDescription("Replies with Pong!"),
   async execute(interaction) {
-    let responseEmbed = {
+    let responseEmbed = EmbedBuilder({
       color: HEXToVBColor("#FFFFFF"),
       title: "Pong!",
       fields: [
@@ -18,7 +18,7 @@ export default {
           value: "Pinging...",
         },
       ],
-    };
+    });
 
     const sent = await interaction.reply({
       embeds: [responseEmbed],

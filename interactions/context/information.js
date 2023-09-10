@@ -1,4 +1,4 @@
-import { ContextMenuCommandBuilder, ApplicationCommandType } from "discord.js";
+import { ContextMenuCommandBuilder, ApplicationCommandType, EmbedBuilder } from "discord.js";
 
 function HEXToVBColor(hex) {
   return parseInt(hex.replace("#", "0x"), 16);
@@ -10,7 +10,7 @@ export default {
     .setType(ApplicationCommandType.User),
   async execute(interaction) {
     let user = interaction.targetUser;
-    let responseEmbed = {
+    let responseEmbed = EmbedBuilder({
       color: HEXToVBColor("#4ade80"),
       title: `Information for ${user.username}!`,
       fields: [
@@ -24,7 +24,7 @@ export default {
           inline: true,
         },
       ],
-    };
+    });
 
     interaction.reply({ embeds: [responseEmbed] });
   },
