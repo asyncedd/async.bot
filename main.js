@@ -2,9 +2,6 @@ import { Client, Collection, GatewayIntentBits } from "discord.js";
 import fs from "node:fs";
 import { fileURLToPath } from "url";
 import path from "path";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,4 +60,4 @@ for (const file of eventFiles) {
   }
 }
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(Bun.env.DISCORD_TOKEN);
