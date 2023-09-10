@@ -1,19 +1,20 @@
 {
   "name": "asyncedd.bot",
   "version": "1.0.0",
-  "description": "",
+  "author": "",
   "main": "main.js",
-  "type": "module",
+  "description": "",
+  "keywords": [],
+  "license": "ISC",
   "scripts": {
     "run": "node .",
     "register": "node register"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "type": "module",
   "dependencies": {
     "bufferutil": "^4.0.7",
     "discord.js": "^14.13.0",
+    "dotenv": "^16.3.1",
     "utf-8-validate": "^6.0.3"
   }
 }
