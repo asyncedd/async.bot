@@ -2,6 +2,9 @@ import {
   SlashCommandBuilder,
   PermissionFlagsBits,
   ChatInputCommandInteraction,
+  ButtonBuilder,
+  ButtonStyle,
+  ActionRowBuilder,
   hyperlink,
 } from "discord.js";
 
@@ -30,6 +33,16 @@ export default {
   async execute(interaction) {
     let user = interaction.options.getUser("target");
     let reason = interaction.options.getString("reason") || "Not specified.";
+    const confirm = new ButtonBuilder()
+      .setCustomId("confirm")
+      .setLabel("Confirm Ban")
+      .setStyle(ButtonStyle.Danger);
+
+    const cancel = new ButtonBuilder()
+      .setCustomId("cancel")
+      .setLabel("Cancel")
+      .setStyle(ButtonStyle.Secondary);
+
     let responseEmbed = {
       color: HEXToVBColor("#FFFFFF"),
       title: `Banning ${user.username}!`,
@@ -37,31 +50,66 @@ export default {
 
     let sent = await interaction.reply({
       embeds: [responseEmbed],
+      components: [new ActionRowBuilder().addComponents(cancel, confirm)],
       fetchReply: true,
     });
 
-    interaction.guild.members
-      .ban(user, { reason: `${reason} | By ${interaction.user}` })
-      .then(() => {
-        const title = `Banned ${user.username}.`;
-        const description = `Reason: ${reason}`;
+    const collectorFilter = (i) => i.user.id === interaction.user.id;
 
-        updateEmbed(title, description);
-      })
-      .catch(() => {
-        updateEmbed(
-          `I can't ban ${user.username}.`,
-          `Please check your permissions because it may be the blame.\nIf you are 100% sure the issue is on our end, please open an issue ${hyperlink(
-            "here",
-            "https://github.com/asyncedd/async.bot"
-          )}`,
-          ephemeral
-        );
+    try {
+      const confirmation = await sent.awaitMessageComponent({
+        filter: collectorFilter,
+        time: 60_000,
       });
 
-    function updateEmbed(title, description) {
-      sent.edit({
-        embeds: [{ title, description, color: HEXToVBColor("#FFFFFF") }],
+      if (confirmation.customId === "confirm") {
+        interaction.guild.members
+          .ban(user, { reason: `${reason} | By ${interaction.user}` })
+          .then(() => {
+            updateEmbed(`Banned ${user.username}`, `Reason: ${reason}`);
+          })
+          .catch(() => {
+            updateEmbed(
+              `I can't ban ${user.username}.`,
+              `Please check your permissions because it may be the blame.\nIf you are 100% sure the issue is on our end, please open an issue ${hyperlink(
+                "here",
+                "https://github.com/asyncedd/async.bot"
+              )}`
+            );
+          });
+      } else if (confirmation.customId === "cancel") {
+        updateEmbed(
+          "OK.",
+          `Canceling the action that is the public banning of ${user.username}`
+        );
+      }
+
+      function updateEmbed(title, description) {
+        confirmation.update({
+          embeds: [{ title, description, color: HEXToVBColor("#FFFFFF") }],
+          components: [
+            new ActionRowBuilder().addComponents(
+              cancel.setDisabled(true),
+              confirm.setDisabled(true)
+            ),
+          ],
+        });
+      }
+    } catch (e) {
+      await interaction.editReply({
+        embeds: [
+          {
+            title: `Not banning ${user.username}`,
+            description: `Confirmation not received within 1 minute, cancelling`,
+            color: HEXToVBColor("#FFFFFF"),
+          },
+        ],
+        components: [
+          new ActionRowBuilder().addComponents(
+            cancel.setDisabled(true),
+            confirm.setDisabled(true)
+          ),
+        ],
       });
     }
   },
